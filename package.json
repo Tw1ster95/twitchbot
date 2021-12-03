@@ -1,0 +1,25 @@
+{
+  "name": "twitchbot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "bot.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "bot",
+    "twitch"
+  ],
+  "author": "tw1sty-",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^10.0.0",
+    "gulel": "^1.2.1",
+    "mysql2": "^2.3.0",
+    "tmi.js": "^1.8.5"
+  },
+  "nodemonConfig": {
+    "ignore": ["channels/*"],
+    "delay": 2500
+  }
+}
