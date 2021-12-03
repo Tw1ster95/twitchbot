@@ -38,4 +38,3 @@ Included functions:
 [viewersinfofunc](https://github.com/Tw1ster95/discordbot#viewersinfofunc)
 
 **More info soon :)**
-# twitchbot
