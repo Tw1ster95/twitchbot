@@ -24,13 +24,13 @@ module.exports.getJsonConfig = async function (func, channel) {
 	}
 	return null;
 }
-
+ 
 module.exports.api = async function (url, callback) {
 	await fetch(url, {
 		method: 'GET',
 		headers: {
             'Client-ID': process.env.CLIENT_ID,
-            'Authorization': process.env.AOUTH_TOKEN
+            'Authorization': process.env.BEARER_TOKEN
         }
 	})
 	.then(res => {
