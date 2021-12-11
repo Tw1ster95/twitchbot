@@ -100,10 +100,10 @@ module.exports.OnMessage = async function (config, func_config, client, channel,
 												// Update Items amount left, last purchased and info
 												await mysqlfunc.qry(connection, `UPDATE ${sql_table.items.name} SET amount = ${amount_left}, last_purchase = ${curTime}, info = '${item.info}' WHERE itemid = '${item.itemid}'`);
 												
-												client.say(channel, `@${tags.username} got ${item.name} for ${item.price} ${await pointssysfunc.pointsName}. There are ` + (!amount_left ? `no` : amount_left) + ` more left.`);
+												client.say(channel, `@${tags.username} got ${item.name} for ${item.price} ${await pointssysfunc.pointsName(channel.slice(1))}. There are ` + (!amount_left ? `no` : amount_left) + ` more left.`);
 											}
 											else
-												client.say(channel, `@${tags.username}, You need ${item.price - points} ${await pointssysfunc.pointsName} more for ${item.name}.`);
+												client.say(channel, `@${tags.username}, You need ${item.price - points} ${await pointssysfunc.pointsName(channel.slice(1))} more for ${item.name}.`);
 										}
 										else
 											client.say(channel, `@${tags.username}, You have to wait ${util.getTimeStr((lastPurchased + (item.user_cooldown * 60)) - curTime)}(User Cooldown) to get another ${item.name}.`);
@@ -120,13 +120,20 @@ module.exports.OnMessage = async function (config, func_config, client, channel,
 					}
 					else {
 						if(results.length > 0)
-							client.say(channel, `@${tags.username} Usage: !${command} get <item>. ${listSomeItems(results, await pointssysfunc.pointsName)}.`);
+							client.say(channel, `@${tags.username} Usage: !${command} get <item>. To see the items use !shopitems.`);
 					}
 				}
 			}
 			else if(results.length > 0)
-				client.say(channel, `@${tags.username} Usage: !${command} get <item>. ${listSomeItems(results, await pointssysfunc.pointsName)}.`);
+				client.say(channel, `@${tags.username} Usage: !${command} get <item>. To see the items use !shopitems.`);
 			
+			await mysqlfunc.end(connection);
+		}
+		else if(command === `${pointsname}shopitems` || command === `${pointsname}storeitems` || command === `shopitems` || command === `storeitems`) {
+			const mysqlfunc = functions.get(`mysqlfunc`);
+			const connection = await mysqlfunc.connect(null, channel);
+			var results = await mysqlfunc.qry(connection, `SELECT * FROM ${sql_table.items.name}`);
+			client.say(channel, `@${tags.username} ${listSomeItems(results, await pointssysfunc.pointsName(channel.slice(1)))}.`);
 			await mysqlfunc.end(connection);
 		}
 	}

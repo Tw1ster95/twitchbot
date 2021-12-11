@@ -209,7 +209,7 @@ module.exports.task = async function (func_config, client, channel) {
 			arrGivePointsTimer[index].timer = Number(func_config.give_interval_minutes);
 			
 			var checkstreamfunc = functions.get(`checkstreamfunc`);
-			if(checkstreamfunc.isLive) {
+			if(checkstreamfunc.isLive(channel)) {
 				var mysqlfunc = functions.get(`mysqlfunc`);
 				var viewersinfofunc = functions.get(`viewersinfofunc`);
 				var connection = await mysqlfunc.connect(null, channel);
