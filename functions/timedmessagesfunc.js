@@ -9,7 +9,7 @@ const sql_table = {
 
 const msgs = new Map();
 
-module.exports.OnLoad = async function (client, channels) {
+const OnLoad = async function (client, channels) {
 	await util.checkFuncConfig(channels, 'timedmessagesfunc', {
 		enabled: 'true'
 	});
@@ -36,7 +36,7 @@ async function LoadTimers(channel) {
 	}
 }
 
-module.exports.task = function(func_config, client, channel) {
+const task = function(func_config, client, channel) {
 	const checkstreamfunc = functions.get(`checkstreamfunc`);
 	if(checkstreamfunc.isLive(channel))
 		CheckAllTimers(client, channel);
@@ -67,7 +67,7 @@ async function CheckAllTimers(client, channel) {
 	}
 }
 
-module.exports.OnMessage = async function (config, func_config, client, channel, tags, message) {
+const OnMessage = async function (config, func_config, client, channel, tags, message) {
     if(message.startsWith(config.prefix)) {
         const args = message.slice(1).split(` `);
         var command = args.shift().toLowerCase();
@@ -159,3 +159,5 @@ function getMsgFromID(msg_id) {
 	const arrMsgs = msgs.get(channel);
 	return arrMsgs.find(element => element.id == msg_id);
 }
+
+module.exports = { OnLoad, OnMessage, task }

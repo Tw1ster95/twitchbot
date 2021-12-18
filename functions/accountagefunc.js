@@ -1,12 +1,12 @@
 ﻿const util = require('../util');
 
-module.exports.OnLoad = async function (client, channels) {
+const OnLoad = async function (client, channels) {
 	await util.checkFuncConfig(channels, 'accountagefunc', {
 		enabled: 'true'
 	});
 }
 
-module.exports.OnMessage = async function (config, func_config, client, channel, tags, message) {
+const OnMessage = async function (config, func_config, client, channel, tags, message) {
 	if(message.startsWith(config.prefix)) {
 		const args = message.slice(1).split(' ');
 		const command = args.shift().toLowerCase();
@@ -35,3 +35,5 @@ module.exports.OnMessage = async function (config, func_config, client, channel,
 		}
 	}
 }
+
+module.exports = { OnLoad, OnMessage }

@@ -19,7 +19,7 @@ const bannedCmdNames = [
 
 const cmds = new Map();
 
-module.exports.OnLoad = async function (client, channels) {
+const OnLoad = async function (client, channels) {
 	await util.checkFuncConfig(channels, 'simplecmdfunc', {
 		enabled: 'true'
 	});
@@ -39,7 +39,7 @@ module.exports.OnLoad = async function (client, channels) {
 	}
 }
 
-module.exports.OnMessage = async function (config, func_config, client, channel, tags, message) {
+const OnMessage = async function (config, func_config, client, channel, tags, message) {
 	const mysqlfunc = functions.get(`mysqlfunc`);
 	const logfunc = functions.get(`logfunc`);
 	
@@ -222,3 +222,5 @@ function listCmds(arrCmds, alias) {
 function isBannedCmd(cmd) { return (bannedCmdNames.find(e => e == cmd)) ? true : false; }
 function isCommand(cmd) { return (arrCmds.find(e => (e.cmd == cmd && !e.alias))) ? true : false; }
 function isAlias(cmd) { return (arrCmds.find(e => (e.cmd == cmd && e.alias))) ? true : false; }
+
+module.exports = { OnLoad, OnMessage }

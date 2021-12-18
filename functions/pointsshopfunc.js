@@ -13,7 +13,7 @@ const sql_table = {
 	}
 };
 
-module.exports.OnLoad = async function (client, channels) {
+const OnLoad = async function (client, channels) {
 	await util.checkFuncConfig(channels, 'pointsshopfunc', {
 		enabled: 'true'
 	});
@@ -23,7 +23,7 @@ module.exports.OnLoad = async function (client, channels) {
 	await mysqlfunc.loadTable(sql_table.purchases, channels);
 }
 
-module.exports.OnMessage = async function (config, func_config, client, channel, tags, message) {
+const OnMessage = async function (config, func_config, client, channel, tags, message) {
 	if(message.startsWith(config.prefix)) {
 		const pointssysfunc = functions.get(`pointssysfunc`);
 		const pointsname = (await pointssysfunc.pointsName(channel.slice(1))).toLowerCase();
@@ -155,3 +155,5 @@ function GetItemInfo(info) {
 	}
 	return info;
 }
+
+module.exports = { OnLoad, OnMessage }

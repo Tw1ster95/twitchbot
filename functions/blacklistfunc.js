@@ -7,7 +7,7 @@ const sql_table = {
 	content: '( `twitch_name` varchar(64) NOT NULL, PRIMARY KEY(`twitch_name`)) ENGINE = MyISAM  DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci;'
 };
 
-module.exports.OnLoad = async function (client, channels) {
+const OnLoad = async function (client, channels) {
 	await util.checkFuncConfig(channels, 'blacklistfunc', {
 		enabled: 'true'
 	});
@@ -16,7 +16,7 @@ module.exports.OnLoad = async function (client, channels) {
 	await mysqlfunc.loadTable(sql_table, channels);
 }
 
-module.exports.OnMessage = async function (config, func_config, client, channel, tags, message) {
+const OnMessage = async function (config, func_config, client, channel, tags, message) {
 	if (message.startsWith(config.prefix)) {
 		const args = message.slice(1).split(' ');
 		const command = args.shift().toLowerCase();
@@ -104,7 +104,7 @@ module.exports.OnMessage = async function (config, func_config, client, channel,
 	}
 }
 
-module.exports.isBlacklisted = async function (twitch_name, table, connection) {
+const isBlacklisted = async function (twitch_name, table, connection) {
 	const mysqlfunc = functions.get(`mysqlfunc`);
 	var results = await mysqlfunc.qry(connection, `SELECT ${table} FROM ${sql_table.name} WHERE twitch_name = '${twitch_name}'`);
 	if(results.length > 0) {
@@ -114,7 +114,7 @@ module.exports.isBlacklisted = async function (twitch_name, table, connection) {
 	return false;
 }
 
-module.exports.exists = async function (table, connection) {
+const exists = async function (table, connection) {
 	var mysqlfunc = functions.get(`mysqlfunc`);
 	var results = await mysqlfunc.qry(connection, `SHOW COLUMNS FROM ${sql_table.name}`);
 	if(results.length > 0) {
@@ -124,7 +124,9 @@ module.exports.exists = async function (table, connection) {
 	return false;
 }
 
-module.exports.create = async function (table, connection) {
+const create = async function (table, connection) {
 	var mysqlfunc = functions.get(`mysqlfunc`);
 	await mysqlfunc.qry(connection, `ALTER TABLE ${sql_table.name} ADD COLUMN ${table} int NOT NULL DEFAULT 0`);
 }
+
+module.exports = { OnLoad, OnMessage, isBlacklisted, exists, create }

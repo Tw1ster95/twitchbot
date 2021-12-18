@@ -1,7 +1,7 @@
 ﻿const functions = require('../functions');
 const util = require('../util');
 
-// Do not touch the arrGame type.
+// Do not touch the game type.
 const gamesinfo = [
 	{
 		name: 'Questions',
@@ -47,7 +47,7 @@ const gamesinfo = [
 
 const games = new Map();
 
-module.exports.OnLoad = async function (client, channels) {
+const OnLoad = async function (client, channels) {
 	await util.checkFuncConfig(channels, 'pointgamesfunc', {
 		enabled: 'true',
 		task_min_time: '300',
@@ -76,7 +76,7 @@ module.exports.OnLoad = async function (client, channels) {
 	}
 }
 
-module.exports.OnMessage = async function(config, func_config, client, channel, tags, message) {
+const OnMessage = async function(config, func_config, client, channel, tags, message) {
 	var arrGame = games.get(channel);
 	if(message.startsWith(config.prefix)) {
 		const args = message.slice(1).split(' ');
@@ -106,7 +106,7 @@ module.exports.OnMessage = async function(config, func_config, client, channel, 
 					else if(command === 'stop') {
 						if(arrGame.on) {
 							client.say(channel, `@${tags.username} спря играта.`);
-							await logfunc.log(`pointgames`, `${tags.username} stopped the arrGame.`);
+							await logfunc.log(`pointgames`, `${tags.username} stopped the game.`);
 							resetGame(func_config, channel);
 						}
 					}
@@ -163,7 +163,7 @@ async function addToGame(client, game_type, info) {
 		
 		if(results.length == 0) {
 			await mysqlfunc.qry(connection, `INSERT INTO ${gamesinfo[gIndex].sql_table.name} (answer) VALUES('${info}')`);
-			client.say(channel, `@${tags.username}, The word ${info} was added to the arrGame ${game_type}.`);
+			client.say(channel, `@${tags.username}, The word ${info} was added to the game ${game_type}.`);
 		}
 		else
 			client.say(channel, `@${tags.username}, The word ${info} already exists.`);
@@ -172,7 +172,7 @@ async function addToGame(client, game_type, info) {
 		var results = await mysqlfunc.qry(connection, `SELECT * FROM ${gamesinfo[gIndex].sql_table.name} WHERE answer = '${info}'`);
 		if(results.length > 0) {
 			await mysqlfunc.qry(connection, `INSERT INTO ${gamesinfo[gIndex].sql_table.name} (answer) VALUES('${info}')`);
-			client.say(channel, `@${tags.username}, The word${info} was added to the arrGame ${game_type}.`);
+			client.say(channel, `@${tags.username}, The word${info} was added to the game ${game_type}.`);
 		}
 		else
 			client.say(channel, `@${tags.username}, The word${info} вече съществува.`);
@@ -181,7 +181,7 @@ async function addToGame(client, game_type, info) {
 		var results = await mysqlfunc.qry(connection, `SELECT * FROM ${gamesinfo[gIndex].sql_table.name} WHERE answer = '${info}'`);
 		if(results.length > 0) {
 			await mysqlfunc.qry(connection, `INSERT INTO ${gamesinfo[gIndex].sql_table.name} (answer) VALUES('${info}')`);
-			client.say(channel, `@${tags.username}, The word${info} was added to the arrGame ${game_type}.`);
+			client.say(channel, `@${tags.username}, The word${info} was added to the game ${game_type}.`);
 		}
 		else
 			client.say(channel, `@${tags.username}, The word${info} вече съществува.`);
@@ -201,7 +201,6 @@ async function StartGame(func_config, client, channel, gameID, name) {
 	var connection = await mysqlfunc.connect(null, channel);
 	var gIndex = gamesinfo.findIndex(g => g.type == game_type);
 	var results = await mysqlfunc.qry(connection, `SELECT * FROM ${gamesinfo[gIndex].sql_table.name}`);
-	var config = await util.getJsonConfig('pointgamesfunc', channel.slice(1));
 
 	var arrGame = games.get(channel);
 	if(results.length > 0) {
@@ -254,13 +253,15 @@ async function resetGame(func_config, channel) {
 	});
 }
 
-module.exports.task = async function(func_config, client, channel) {
+const task = async function(func_config, client, channel) {
 	var arrGame = games.get(channel);
 	if(arrGame.on) {
 		if(Number(func_config.win_time)) {
 			if(((new Date().getTime() / 1000) - arrGame.start) >= Number(func_config.win_time)) {
-				client.say(channel, `The arrGame of ${gamesinfo[arrGame.type].name} ended. No one won.`);
-				await logfunc.log(`pointgames`, `The arrGame of ${gamesinfo[arrGame.type].name} ended. No one won.`, null, channel);
+				var curGameInfo = gamesinfo.find(g => g.type == arrGame.type);
+				client.say(channel, `The game of ${curGameInfo.name} ended. No one won.`);
+				var logfunc = functions.get(`logfunc`);
+				await logfunc.log(`pointgames`, `The game of ${curGameInfo.name} ended. No one won.`, null, channel);
 				resetGame(func_config, channel);
 			}
 		}
@@ -291,3 +292,5 @@ function InsertSpaces(string) {
 		string = addAt(string, i, i == 0 ? '' : ' ');
 	return string;
 }
+
+module.exports = { OnLoad, OnMessage, task }

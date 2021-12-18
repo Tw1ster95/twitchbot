@@ -15,7 +15,7 @@ const sql_tables = {
 
 const arrGwEndTime = Array();
 
-module.exports.OnLoad = async function (client, channels) {
+const OnLoad = async function (client, channels) {
 	await util.checkFuncConfig(channels, 'giveawayfunc', {
 		enabled: 'true'
 	});
@@ -34,7 +34,7 @@ module.exports.OnLoad = async function (client, channels) {
 	}
 }
 
-module.exports.OnMessage = async function (config, func_config, client, channel, tags, message) {
+const OnMessage = async function (config, func_config, client, channel, tags, message) {
     if(message.startsWith(config.prefix)) {
 		const mysqlfunc = functions.get(`mysqlfunc`);
 		const logfunc = functions.get(`logfunc`);
@@ -338,7 +338,7 @@ module.exports.OnMessage = async function (config, func_config, client, channel,
     }
 }
 
-module.exports.task = async function (func_config, client, channel) {
+const task = async function (func_config, client, channel) {
 	var index = arrGwEndTime.findIndex(e => (e.channel == channel && getTimeLeft(e.time) <= 0));
 	if(index > -1) {
 		if(getTimeLeft(arrGwEndTime[index].time) <= 0) {
@@ -364,3 +364,5 @@ function getTimeEnd(minutes)	{ return (new Date().getTime() / 1000) + (minutes *
 function getTimeLeft(time)	{ return (time - (new Date().getTime() / 1000)); }
 
 function getTicketsStr(free, normal) { return ((`${free+normal} ticket`) + (((free+normal) > 1) ? `s` : ``) + ((free > 0) ? `, ${free} of which ${(free > 1) ? 'were free' : 'was free'}` : ``)); }
+
+module.exports = { OnLoad, OnMessage, task }

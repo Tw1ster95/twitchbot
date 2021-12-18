@@ -9,12 +9,12 @@ const sql_table = {
 
 const arrGivePointsTimer = Array();
 
-module.exports.pointsName = async function (channel) {
+const pointsName = async function (channel) {
 	var config = await util.getJsonConfig('pointssysfunc', channel);
 	return config.points_name;
 };
 
-module.exports.OnLoad = async function (client, channels) {
+const OnLoad = async function (client, channels) {
 	await util.checkFuncConfig(channels, 'pointssysfunc', {
 		enabled: 'true',
 		get_amount: '1',
@@ -43,7 +43,7 @@ module.exports.OnLoad = async function (client, channels) {
 	}
 }
 
-module.exports.OnMessage = async function (config, func_config, client, channel, tags, message) {
+const OnMessage = async function (config, func_config, client, channel, tags, message) {
 	if(message.startsWith(config.prefix)) {
 		const args = message.slice(1).split(' ');
 		const command = args.shift().toLowerCase();
@@ -164,7 +164,7 @@ module.exports.OnMessage = async function (config, func_config, client, channel,
 		viewersinfofunc.set(arrViewerInfo.twitch_name, channel, { bonuspoints: Number(func_config.get_bonus_per_msg) });
 }
 
-module.exports.add = async function (twitch_name, channel, points, conn) {
+const add = async function (twitch_name, channel, points, conn) {
 	if(Number.isInteger(points) && points > 0) {
 		var mysqlfunc = functions.get(`mysqlfunc`);
 		var connection = conn || await mysqlfunc.connect(null, channel);
@@ -174,7 +174,7 @@ module.exports.add = async function (twitch_name, channel, points, conn) {
 	}
 }
 
-module.exports.take = async function (twitch_name, channel, points, conn) {
+const take = async function (twitch_name, channel, points, conn) {
 	if(Number.isInteger(points) && points > 0) {
 		var mysqlfunc = functions.get(`mysqlfunc`);
 		var connection = conn || await mysqlfunc.connect(null, channel);
@@ -189,7 +189,7 @@ module.exports.take = async function (twitch_name, channel, points, conn) {
 	}
 }
 
-module.exports.get = async function (twitch_name, channel, conn) {
+const get = async function (twitch_name, channel, conn) {
 	var mysqlfunc = functions.get(`mysqlfunc`);
 	var connection = conn || await mysqlfunc.connect(null, channel);
 	var results = await mysqlfunc.qry(connection, `SELECT points FROM ${sql_table.name} WHERE twitch_name = '${twitch_name}'`);
@@ -200,7 +200,7 @@ module.exports.get = async function (twitch_name, channel, conn) {
 	return 0;
 }
 
-module.exports.task = async function (func_config, client, channel) {
+const task = async function (func_config, client, channel) {
 	var index = arrGivePointsTimer.findIndex(e => e.channel == channel);
 	
 	if(index > -1) {
@@ -235,3 +235,5 @@ async function checkBlacklist(config, twitch_name, connection) {
 	const blacklistfunc = functions.get(`blacklistfunc`);
 	return (blacklistfunc) ? ((await blacklistfunc.isBlacklisted(twitch_name, config.blacklist_name, connection)) ? true : false) : false;
 }
+
+module.exports = { pointsName, OnLoad, OnMessage, add, take, get, task }

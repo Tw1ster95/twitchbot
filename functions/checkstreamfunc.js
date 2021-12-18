@@ -9,7 +9,7 @@ const sql_table = {
 
 var streams = new Map();
 
-module.exports.OnLoad = async function (client, channels) {
+const OnLoad = async function (client, channels) {
 	await util.checkFuncConfig(channels, 'checkstreamfunc', {
 		enabled: 'true',
 		check_interval: '5'
@@ -32,11 +32,7 @@ module.exports.OnLoad = async function (client, channels) {
 }
 
 // Check is Stream online task
-module.exports.task = function (client, func_config, channel) {
-	checkStream(client, func_config, channel);
-}
-
-async function checkStream(client, func_config, channel) {
+const task = async function (client, func_config, channel) {
 	arrStreamData = streams.get(channel);
 	if(arrStreamData) {
 		arrStreamData.checkTimer--;
@@ -121,7 +117,9 @@ async function UpdateSQLInfo(channel, end_session, follows) {
 	await mysqlfunc.end(connection);
 }
 
-module.exports.isLive = function (channel) {
+const isLive = function (channel) {
 	var arrStreamData = streams.get(channel);
 	return arrStreamData.isLive;
 }
+
+module.exports = { OnLoad, task, isLive }

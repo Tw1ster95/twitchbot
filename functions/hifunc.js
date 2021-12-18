@@ -21,13 +21,13 @@ const welcomeTriggers = {
 	en: [ `hi`, `hay`, `hey`, `hello` ]
 }
 
-module.exports.OnLoad = async function (client, channels) {
+const OnLoad = async function (client, channels) {
 	await util.checkFuncConfig(channels, 'hifunc', {
 		enabled: 'true'
 	});
 }
 
-module.exports.OnMessage = function (config, func_config, client, channel, tags, message) {
+const OnMessage = function (config, func_config, client, channel, tags, message) {
     const args = message.split(' ');
     const command = args.shift().toLowerCase();
 	var found = welcomeTriggers.bg.find(m => m == command) ? true : false;
@@ -39,3 +39,5 @@ module.exports.OnMessage = function (config, func_config, client, channel, tags,
 			client.say(channel, welcomeMsgs.en[util.getRngInteger(0, welcomeMsgs.en.length-1)].replace(`USER`, `@${tags.username}`));
 	}
 }
+
+module.exports = { OnLoad, OnMessage }

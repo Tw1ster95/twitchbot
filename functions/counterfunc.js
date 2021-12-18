@@ -10,7 +10,7 @@ const sql_table = {
 
 const counters = new Map();
 
-module.exports.OnLoad = async function (client, channels) {
+const OnLoad = async function (client, channels) {
 	await util.checkFuncConfig(channels, 'counterfunc', {
 		enabled: 'true',
 		only_mods: 'true',
@@ -41,7 +41,7 @@ module.exports.OnLoad = async function (client, channels) {
 	}
 }
 
-module.exports.OnMessage = async function (config, func_config, client, channel, tags, message) {
+const OnMessage = async function (config, func_config, client, channel, tags, message) {
     if (message.startsWith(config.prefix)) {
 		const logfunc = functions.get(`logfunc`);
         const args = message.slice(1).split(' ');
@@ -174,3 +174,5 @@ async function hasCounterPerm(tags, func_config) {
 	}
 	return true;
 }
+
+module.exports = { OnLoad, OnMessage }

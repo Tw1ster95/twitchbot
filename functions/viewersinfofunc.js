@@ -9,7 +9,7 @@ const sql_table = {
 
 const viewers = new Map();
 
-module.exports.OnLoad = async function (client, channels) {
+const OnLoad = async function (client, channels) {
 	await util.checkFuncConfig(channels, 'viewersinfofunc', {
 		enabled: 'true'
 	});
@@ -21,9 +21,9 @@ module.exports.OnLoad = async function (client, channels) {
 		viewers.set(channels[i], Array());
 }
 
-module.exports.OnJoin = async function (config, func_config, client, channel, nick) {
+const OnJoin = async function (config, func_config, client, channel, nick) {
 	const arrViewersInfo = viewers.get(channel);
-	if(!arrViewersInfo.find(v => v.twitch_name == nick)) {
+	if(arrViewersInfo && !arrViewersInfo.find(v => v.twitch_name == nick)) {
 		const mysqlfunc = functions.get(`mysqlfunc`);
 		const connection = await mysqlfunc.connect(null, channel);
 		const results = await mysqlfunc.qry(connection, `SELECT * FROM ${sql_table.name} WHERE twitch_name = '${nick}'`);
@@ -39,7 +39,7 @@ module.exports.OnJoin = async function (config, func_config, client, channel, ni
 	}
 }
 
-module.exports.OnPart = async function (config, func_config, client, channel, nick) {
+const OnPart = async function (config, func_config, client, channel, nick) {
 	const arrViewersInfo = viewers.get(channel);
 	const vIndex = arrViewersInfo.findIndex(v => v.twitch_name == nick);
 	arrViewersInfo.splice(vIndex, 1);
@@ -47,7 +47,7 @@ module.exports.OnPart = async function (config, func_config, client, channel, ni
 	await logfunc.log(`viewersinfo`, `${nick} left the stream.`, null, channel);
 }
 
-module.exports.get = async function getViewerInfo(twitch_name, channel) {
+const get = async function getViewerInfo(twitch_name, channel) {
 	const arrViewersInfo = viewers.get(channel);
 	if(twitch_name) {
 		const info = arrViewersInfo.find(v => v.twitch_name == twitch_name);
@@ -74,7 +74,7 @@ module.exports.get = async function getViewerInfo(twitch_name, channel) {
 		return arrViewersInfo;
 }
 
-module.exports.set = async function setViewerInfo(twitch_name, channel, arrData) {
+const set = async function setViewerInfo(twitch_name, channel, arrData) {
 	const arrViewersInfo = viewers.get(channel);
 	const vIndex = arrViewersInfo.findIndex(v => v.twitch_name == twitch_name);
 	if(vIndex > -1)
@@ -90,3 +90,5 @@ module.exports.set = async function setViewerInfo(twitch_name, channel, arrData)
 		arrViewersInfo.push(results[0]);
 	}
 }
+
+module.exports = { OnLoad, OnJoin, OnPart, get, set }

@@ -1,7 +1,7 @@
 {
   "name": "twitchbot",
   "version": "1.0.0",
-  "description": "",
+  "description": "twitch bot",
   "main": "bot.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -19,7 +19,9 @@
     "tmi.js": "^1.8.5"
   },
   "nodemonConfig": {
-    "ignore": ["channels/*"],
+    "ignore": [
+      "channels/*"
+    ],
     "delay": 2500
   }
 }
