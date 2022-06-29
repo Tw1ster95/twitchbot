@@ -1,6 +1,6 @@
 # twitchbot
 
-**The code is old and inefficient. I will probably release a new one soon.**
+# **The code is old and inefficient. I will probably release a new one soon.**
 
 **Information:**  
 Eazy customizable twitch bot with a few ready functions.
