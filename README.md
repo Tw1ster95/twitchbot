@@ -1,7 +1,9 @@
 # twitchbot
 
+**The code is old and inefficient. I will probably release a new one soon.**
+
 **Information:**  
-Eazy customizable discord bot with a few ready functions.
+Eazy customizable twitch bot with a few ready functions.
 
 Main files are bot.js, functions.js and util.js.  
 Everything in the /functions/ folder are extra functions that can be added/removed at any time. Some of the functions can't function without another so be carefull if you remove something.
